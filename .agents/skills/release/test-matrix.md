@@ -16,7 +16,7 @@ deliberately fall back to the chat default (`open_notebook/ai/models.py`).
 | Check | Command / tool |
 |---|---|
 | Backend suite | `uv run pytest tests/` |
-| Lint & types | `ruff check .` · `uv run python -m mypy .` (both are required CI gates; mypy runs at 0 errors — `uv sync --extra dev` first if mypy is missing locally) |
+| Lint & types | `ruff check .` · `uv run python -m mypy .` (both are required CI gates; mypy runs at 0 errors — mypy lives in the `dev` dependency-group in `pyproject.toml`, not an extra, so plain `uv sync` already installs it; if it's genuinely missing, a prior `uv sync --no-dev` is the likely cause, not a missing flag) |
 | Frontend | `npm run lint` · `npm run test` · `npm run build` (run `npm ci` first if deps changed) |
 | Full happy path | smoke-e2e agent on the local dev stack (API + Playwright UI) |
 | Dependency audit | Dependabot alerts + `npm audit` |
