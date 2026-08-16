@@ -7,7 +7,9 @@ feedback, not an obstacle to route around.
 
 - Run any test, build, probe or analysis; start/stop local dev services
 - Create branches, commits, and open PRs
-- Spawn subagents (smoke-e2e, investigation, fixes)
+- Spawn subagents defined in `.claude/agents/`: `smoke-e2e`, `investigation`,
+  `fixes` (Codex-format twins of all three also live under `.codex/agents/`
+  for release runs conducted from Codex — keep both sides in sync)
 - Build/pull Docker images locally; run the release-test harness and RC stack
 - Dispatch the *Build and Release* CI workflow with `push_latest=false`
   (version tags only — this is the agreed pre-verification push)

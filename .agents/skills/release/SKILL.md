@@ -1,6 +1,9 @@
 ---
 name: release
-description: Orchestrate an Open Notebook release — changelog audit, risk-based A/B/C test matrix, Docker image gate (fresh + upgrade), fix loop via PRs, cut, publication with credits, retro. Use when preparing, testing, cutting or publishing a release.
+description: Orchestrate an Open Notebook release — changelog audit, risk-based A/B/C test matrix, Docker image gate (fresh + upgrade), fix loop via PRs, cut, publication with credits, retro. Use when preparing, testing, cutting or publishing a release. Dewey: 005.14.
+metadata:
+  author: TABARC-Code
+  dewey_decimal_code: '005.14'
 ---
 
 # Open Notebook Release Orchestrator
@@ -12,11 +15,14 @@ orchestration order, the exact commands, and the human gates.
 
 **Ground rules for the whole run:**
 
-- The release happens in a **single session**. Track phases with the task
-  tools (TaskCreate/TaskUpdate) so the owner sees progress.
+- The release happens in a **single session**. Track phases with your
+  todo-list tool (`TodoWrite` in Claude Code, or the equivalent in whatever
+  agent is running this skill) so the owner sees progress.
 - Every repo change goes through a **PR** (branch → PR → CI + cubic → merge).
   Never push to main. Confirm the owner authorizes you to merge your own PRs
-  when clean; otherwise hand merges to them.
+  when clean; otherwise hand merges to them. The fixes agent (Phase 4) uses
+  `karpathy-code-discipline`, `lazy-review`, and `terse-commit` where it
+  writes and commits code — see `.claude/agents/fixes.md`.
 - Interact in the owner's language; write code, commits and docs in English.
 - Read `${CLAUDE_SKILL_DIR}/gates.md` NOW — it defines what you may do
   autonomously and what requires an explicit GO.
@@ -44,10 +50,12 @@ executing** — they decide bucket-B investments and own bucket C.
 Run in parallel where possible:
 
 - `uv run pytest tests/` · `ruff check .` · `uv run python -m mypy .` (all three
-  are required CI gates since the July 2026 cleanup; mypy must exit 0)
+  are required CI gates since the July 2026 cleanup; mypy must exit 0 — it's in
+  the `dev` dependency-group, which `uv sync` installs by default; there is no
+  `--extra dev`, so if it's missing locally suspect a prior `--no-dev` sync)
 - Frontend: `npm run lint`, `npm run test`, `npm run build` (production build;
   a stale `node_modules` produces false build failures — `npm ci` first if so)
-- The **smoke-e2e agent** against the local dev stack (start it: database →
+- The **smoke-e2e agent** (`.claude/agents/smoke-e2e.md`) against the local dev stack (start it: database →
   api → worker → frontend; check ports are free first — another project may
   hold 3000/8000: identify the owner via `lsof` + process cwd, never kill
   blind; the frontend runs fine on `PORT=3001 npm run dev` — pass the URL to
@@ -68,8 +76,10 @@ Run in parallel where possible:
 
 ## Phase 4 — Fix loop
 
-For each finding: reproduce → root-cause → focused PR with regression tests →
-CI + cubic → merge (per gates.md). Apply the re-test policy from
+For each finding: hand it to the **investigation agent**
+(`.claude/agents/investigation.md`) to reproduce and root-cause, then the
+**fixes agent** (`.claude/agents/fixes.md`) to implement a focused PR with
+regression tests → CI + cubic → merge (per gates.md). Apply the re-test policy from
 RELEASE_PROCESS.md after each merge. Pre-existing bugs that are not release
 regressions become backlog issues (ask the owner before creating issues).
 Verify UI fixes in the real browser (Playwright) before opening the PR.
