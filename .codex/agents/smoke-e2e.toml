@@ -1,5 +1,6 @@
 name = "smoke-e2e"
-description = "End-to-end smoke test agent for release preparation. Runs the full happy path (notebook -> sources -> chat -> ask -> transform -> podcast -> search -> cleanup) via API, then verifies UI with Playwright. Last barrier before release."
+description = "End-to-end smoke test agent for release preparation. Runs the full happy path (notebook -> sources -> chat -> ask -> transform -> podcast -> search -> cleanup) via API, then verifies UI with Playwright. Last barrier before release. Dewey: 005.14."
+dewey_decimal_code = "005.14"
 developer_instructions = '''
 # Smoke Test Agent — Release Gate
 
